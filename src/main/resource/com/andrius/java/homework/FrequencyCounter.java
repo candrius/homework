@@ -5,7 +5,8 @@ import java.util.stream.Collectors;
 
 public class FrequencyCounter {
 
-	static void countFrequency(int minValue, int maxValue, ArrayList<Integer> numbersFreq, List<Integer> listOfUserInput) { // print method
+	static void countFrequency(int minValue, int maxValue, ArrayList<Integer> numbersFreq,
+			List<Integer> listOfUserInput) { // method for counting frequency of numbers
 		System.out.print("frequency:");
 		int indent = findDigitsAmmount(minValue, maxValue);
 
@@ -53,22 +54,20 @@ public class FrequencyCounter {
 
 	}
 
-
 	public static void main(String[] args) {
 		if (args.length == 0) {
 			System.out.println("No Input values");
 			System.exit(1);
 		}
-		 
-		 List<Integer> listOfUserInput = Arrays.asList(args).stream().mapToInt(num -> Integer.parseInt(num)).boxed()
-				.collect(Collectors.toList());
+
+		List<Integer> listOfUserInput = Arrays.asList(args).stream().map(Integer::parseInt)
+				.collect(Collectors.toList()); // Integer to int list
 
 		int maxValue = Collections.max(listOfUserInput); // max value of input
 		int minValue = Collections.min(listOfUserInput); // min value of input
 
 		ArrayList<Integer> numbersFreq = new ArrayList<Integer>(); // array list for frequency
 
-		
 		countFrequency(minValue, maxValue, numbersFreq, listOfUserInput);
 
 		countFrequencyGraph(minValue, maxValue, numbersFreq);
