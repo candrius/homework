@@ -1,0 +1,30 @@
+import requests
+import csv
+import re
+
+
+def send_simple_message(to, subject, text):
+    return requests.post(
+        "https://api.mailgun.net/v3/sandbox68b27b81ccb04aedb42fcf21e34be461.mailgun.org/messages",
+        auth=("api", "c236dfd3bd692a99ed61a5496ef4d738-6140bac2-49803c19"),
+        data={"from": "Mailgun Sandbox <postmaster@sandbox68b27b81ccb04aedb42fcf21e34be461.mailgun.org>",
+              "to": "{}".format(to),
+              "subject": "{}".format(subject),
+              "text": "{}".format(text)})
+
+
+def validate_email(emailAddress):
+    match = re.match('^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$', emailAddress)
+    return match
+
+
+with open('example.csv') as csv_file:
+    csvReader = csv.reader(csv_file, delimiter=';')
+    header = next(csvReader)
+    for rowItem in csvReader:
+        if validate_email(rowItem[0]):
+            send_simple_message(rowItem[0], rowItem[1], rowItem[2])
+        else:
+            print('Invalid email {} at line {}'.format(rowItem[0], csvReader.line_num))
+
+
