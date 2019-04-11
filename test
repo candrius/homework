@@ -1,6 +1,16 @@
 import requests
 import csv
 import re
+from twilio.rest import Client
+
+
+class Notification:
+
+    messageType = messageType
+    messageReceiver = messageReceiver
+    messageSubject = messageSubject
+    messageContent = messageContent
+    messageSender = messageSender
 
 
 def send_simple_message(to, subject, text):
@@ -8,9 +18,9 @@ def send_simple_message(to, subject, text):
         "https://api.mailgun.net/v3/sandbox68b27b81ccb04aedb42fcf21e34be461.mailgun.org/messages",
         auth=("api", "c236dfd3bd692a99ed61a5496ef4d738-6140bac2-49803c19"),
         data={"from": "Mailgun Sandbox <postmaster@sandbox68b27b81ccb04aedb42fcf21e34be461.mailgun.org>",
-              "to": "{}".format(to),
-              "subject": "{}".format(subject),
-              "text": "{}".format(text)})
+              "to": "{}".format(Notification.messageReceiver),
+              "subject": "{}".format(Notification.messageSubject),
+              "text": "{}".format(Notification.messageContent)})
 
 
 def validate_email(emailAddress):
@@ -18,13 +28,29 @@ def validate_email(emailAddress):
     return match
 
 
+def send_sms_message(number, text):
+    account_sid = 'ACc363d6787789fb311ff612754743d021'
+    auth_token = 'd06c1527a9c5615e74a1968b8fb9f763'
+    client = Client(account_sid, auth_token)
+
+    return client.messages.create(
+        body=Notification.messageContent,
+        from_=Notification.messageSender, #+37066802165
+        to=Notification.messageReceiver
+    )
+
+
 with open('example.csv') as csv_file:
     csvReader = csv.reader(csv_file, delimiter=';')
     header = next(csvReader)
     for rowItem in csvReader:
-        if validate_email(rowItem[0]):
-            send_simple_message(rowItem[0], rowItem[1], rowItem[2])
-        else:
+        emailTag = re.match('email', rowItem[0])
+        smsTag = re.match(r'sms', rowItem[0])
+        if bool(emailTag) & bool(validate_email(rowItem[1])):
+            email = Notification(rowItem[0], rowItem[1], rowItem[2],0)
+        elif rowItem[0] == 'sms':
+            send_sms_message(rowItem[1], rowItem[2])
+        elif not validate_email(rowItem[1]):
             print('Invalid email {} at line {}'.format(rowItem[0], csvReader.line_num))
-
-
+        else:
+            print('wrong type fo record')
