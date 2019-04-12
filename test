@@ -15,9 +15,9 @@ class Notification:
 
 def send_simple_message(to, subject, text):
     return requests.post(
-        "https://api.mailgun.net/v3/sandbox68b27b81ccb04aedb42fcf21e34be461.mailgun.org/messages",
-        auth=("api", "c236dfd3bd692a99ed61a5496ef4d738-6140bac2-49803c19"),
-        data={"from": "Mailgun Sandbox <postmaster@sandbox68b27b81ccb04aedb42fcf21e34be461.mailgun.org>",
+        "",
+        auth=("api", ""),
+        data={"from": ">",
               "to": "{}".format(Notification.messageReceiver),
               "subject": "{}".format(Notification.messageSubject),
               "text": "{}".format(Notification.messageContent)})
@@ -29,8 +29,8 @@ def validate_email(emailAddress):
 
 
 def send_sms_message(number, text):
-    account_sid = 'ACc363d6787789fb311ff612754743d021'
-    auth_token = 'd06c1527a9c5615e74a1968b8fb9f763'
+    account_sid = ''
+    auth_token = ''
     client = Client(account_sid, auth_token)
 
     return client.messages.create(
